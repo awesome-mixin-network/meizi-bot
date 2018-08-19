@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/fox-one/foxone-mixin-bot/session"
 	bot "github.com/lyricat/bot-api-go-client"
+	"github.com/lyricat/meizi-bot/session"
 )
 
 type Subscriber struct {

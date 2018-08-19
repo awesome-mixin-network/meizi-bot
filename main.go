@@ -1,15 +1,19 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 
-	"github.com/fox-one/foxone-mixin-bot/durable"
-	"github.com/fox-one/foxone-mixin-bot/services"
+	"github.com/lyricat/meizi-bot/config"
+
+	"context"
+
+	"github.com/lyricat/meizi-bot/durable"
+	"github.com/lyricat/meizi-bot/services"
 )
 
 func main() {
+	config.LoadConfig()
 	service := flag.String("service", "blaze", "run a service")
 	flag.Parse()
 	db := durable.OpenDatabaseClient(context.Background())

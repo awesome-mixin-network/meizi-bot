@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/fox-one/foxone-mixin-bot/config"
-	"github.com/fox-one/foxone-mixin-bot/session"
+	"github.com/lyricat/meizi-bot/config"
+	"github.com/lyricat/meizi-bot/session"
 
 	bot "github.com/lyricat/bot-api-go-client"
 )
@@ -18,7 +18,7 @@ func StartBlaze(db *sql.DB) error {
 	defer cancel()
 
 	for {
-		if err := bot.Loop(ctx, ResponseMessage{}, config.MixinClientId, config.MixinSessionId, config.MixinPrivateKey); err != nil {
+		if err := bot.Loop(ctx, ResponseMessage{}, config.Global.MixinClientId, config.Global.MixinSessionId, config.Global.MixinPrivateKey); err != nil {
 			log.Println(err)
 		}
 		log.Println("connection loop end")

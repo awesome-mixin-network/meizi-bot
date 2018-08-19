@@ -3,10 +3,11 @@ package models
 import (
 	"context"
 	"fmt"
-	json "github.com/bitly/go-simplejson"
-	"github.com/fox-one/foxone-mixin-bot/session"
 	"log"
 	"time"
+
+	json "github.com/bitly/go-simplejson"
+	"github.com/lyricat/meizi-bot/session"
 )
 
 type Item struct {
@@ -17,10 +18,11 @@ type Item struct {
 	Ref         string
 	Urls        []string
 	ServiceName string
+	ServiceType string
 	CreatedAt   time.Time
 }
 
-func CreateItem(ctx context.Context, itemId string, name string, desc string, ref string, urls []string, serviceName string) (*Item, error) {
+func CreateItem(ctx context.Context, itemId string, name string, desc string, ref string, urls []string, serviceName string, ServiceType string) (*Item, error) {
 	existedItem, err := findExistedItemByItemId(ctx, itemId, serviceName)
 	if existedItem == nil {
 		urlsJs := json.New()
@@ -34,11 +36,12 @@ func CreateItem(ctx context.Context, itemId string, name string, desc string, re
 			Ref:         ref,
 			Urls:        urls,
 			ServiceName: serviceName,
+			ServiceType: ServiceType,
 			CreatedAt:   time.Now().UTC(),
 		}
 
-		_, err = session.Database(ctx).Exec("Insert into items(item_id, name, desc, ref, urls, service_name, created_at) values($1, $2, $3, $4, $5, $6, $7)",
-			item.ItemId, item.Name, item.Desc, item.Ref, string(urlsBytes), item.ServiceName, fmt.Sprintf("%v", item.CreatedAt))
+		_, err = session.Database(ctx).Exec("Insert into items(item_id, name, desc, ref, urls, service_name, service_type, created_at) values($1, $2, $3, $4, $5, $6, $7, $8)",
+			item.ItemId, item.Name, item.Desc, item.Ref, string(urlsBytes), item.ServiceName, item.ServiceType, fmt.Sprintf("%v", item.CreatedAt))
 		if err != nil {
 			log.Println(err)
 			return nil, err
@@ -66,7 +69,7 @@ func GetRandomItem(ctx context.Context) (*Item, error) {
 	row := session.Database(ctx).QueryRow("select * from items order by RANDOM() limit 1")
 	var tempUrls []byte
 	var item Item
-	if err := row.Scan(&item.Id, &item.ItemId, &item.Name, &item.Desc, &item.Ref, &tempUrls, &item.ServiceName, &item.CreatedAt); err != nil {
+	if err := row.Scan(&item.Id, &item.ItemId, &item.Name, &item.Desc, &item.Ref, &tempUrls, &item.ServiceName, &item.ServiceType, &item.CreatedAt); err != nil {
 		log.Println(err)
 		return nil, err
 	}

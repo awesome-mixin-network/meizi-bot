@@ -64,7 +64,7 @@ func (c *Twitter) Fetch() (results []*Item, err error) {
 	if c.Query != "" {
 		params := &SearchTweetParams{
 			Query: c.Query,
-			Count: 50,
+			Count: 3,
 		}
 
 		search, _, err1 := c.client.Search.Tweets(params)
@@ -118,16 +118,23 @@ func (c *Twitter) toItem(t Tweet) *Item {
 		return nil
 	}
 
+	animated := false
+
 	var media []string = nil
 
 	if t.ExtendedEntities != nil {
 		for _, m := range t.ExtendedEntities.Media {
-			if m.MediaURLHttps != "" {
+			if m.Type == "animated_gif" {
+				animated = true
+				media = append(media, m.VideoInfo.Variants[0].URL)
+			} else if m.MediaURLHttps != "" {
 				media = append(media, m.MediaURLHttps)
 			}
 		}
 	}
-	if len(media) == 0 && t.Entities != nil {
+	// res2B, _ := json.Marshal(t)
+	// fmt.Println(string(res2B))
+	if len(media) == 0 && t.Entities != nil && !animated {
 		for _, m := range t.Entities.Media {
 			if m.MediaURLHttps != "" {
 				media = append(media, m.MediaURLHttps)
@@ -136,7 +143,7 @@ func (c *Twitter) toItem(t Tweet) *Item {
 	} else {
 		// log.Println("no media found")
 	}
-	// log.Println("media", len(media))
+	log.Println("media", len(media))
 
 	if c.MediaOnly && len(media) == 0 {
 		return nil
