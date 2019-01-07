@@ -41,7 +41,6 @@ func GetTwitterItems(ctx context.Context, conf *config.SpiderConf) []*clients.It
 		0,
 		1)
 	items, err := twit.Fetch()
-	log.Printf("%+v\n", items)
 	if err != nil {
 		log.Fatalln("error", err)
 	}

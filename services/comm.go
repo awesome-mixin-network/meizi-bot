@@ -57,9 +57,11 @@ func GetRandomPicture(ctx context.Context) string {
 
 func CreateAttachment(ctx context.Context, filepath string) (string, error) {
 	var err error
-	var attachmentId, uploadUrl string
+	var attachmentId, uploadUrl, viewUrl string
 	// request upload info
-	attachmentId, uploadUrl, _, err = requestUploadAttachmentInfo(ctx)
+	attachmentId, uploadUrl, viewUrl, err = requestUploadAttachmentInfo(ctx)
+	// @TODO update db to save view url and attachement id
+	log.Printf("[i] View url: %s\n", viewUrl)
 	if err != nil {
 		log.Println("requestUploadAttachmentInfo failed", err)
 		return "", err
@@ -83,7 +85,6 @@ func PostAttachementFile(attachmentId, uploadUrl, filepath string) (string, erro
 	attachmentContentType := getMediaContentType(filepath)
 	attachmentWidth, attachmentHeight := getMediaDimension(attachmentContentType, filepath)
 	duration, _ := getMediaDuration(attachmentContentType, filepath)
-	log.Printf("Duration: %s\n", duration)
 
 	//buffer for storing multipart data
 	byteBuf := &bytes.Buffer{}

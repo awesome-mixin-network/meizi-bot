@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	// "encoding/json"
 
 	. "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -64,7 +65,7 @@ func (c *Twitter) Fetch() (results []*Item, err error) {
 	if c.Query != "" {
 		params := &SearchTweetParams{
 			Query: c.Query,
-			Count: 3,
+			Count: 20,
 		}
 
 		search, _, err1 := c.client.Search.Tweets(params)
@@ -85,6 +86,8 @@ func (c *Twitter) Fetch() (results []*Item, err error) {
 			return
 		}
 	}
+	// res2B, _ := json.Marshal(tweets)
+	// fmt.Println(string(res2B))
 
 	for _, t := range tweets {
 		if c.Username != "" {
@@ -141,9 +144,9 @@ func (c *Twitter) toItem(t Tweet) *Item {
 			}
 		}
 	} else {
-		// log.Println("no media found")
+		log.Println("no media found")
 	}
-	log.Println("media", len(media))
+	log.Printf("media: %s\n", media)
 
 	if c.MediaOnly && len(media) == 0 {
 		return nil
